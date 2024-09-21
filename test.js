@@ -41,8 +41,32 @@ function generateQuestions() {
     const shuffledList = wordList.sort(() => 0.5 - Math.random()).slice(0, 20);
 
     shuffledList.forEach((word, index) => {
-        const question = document.createElement('p');
-        question.textContent = `${index + 1}. 英語: ${word.english} | 日本語: ${word.japanese}`;
-        questionsContainer.appendChild(question);
+        const questionDiv = document.createElement('div');
+        questionDiv.innerHTML = `
+            <p>${index + 1}. 日本語: ${word.japanese}</p>
+            <input type="text" id="answer-${index}" placeholder="英語を入力">
+            <span id="result-${index}" style="margin-left: 10px;"></span>
+        `;
+        questionDiv.setAttribute('data-answer', word.english); // 正解の英単語を属性として保存
+        questionsContainer.appendChild(questionDiv);
+    });
+}
+
+// 答え合わせの関数
+function checkAnswers() {
+    const questionDivs = document.querySelectorAll('#questions div');
+
+    questionDivs.forEach((questionDiv, index) => {
+        const userAnswer = document.getElementById(`answer-${index}`).value.trim().toLowerCase();
+        const correctAnswer = questionDiv.getAttribute('data-answer').toLowerCase();
+
+        const resultSpan = document.getElementById(`result-${index}`);
+        if (userAnswer === correctAnswer) {
+            resultSpan.textContent = "正解！";
+            resultSpan.style.color = "green";
+        } else {
+            resultSpan.textContent = `不正解。正解は ${correctAnswer}`;
+            resultSpan.style.color = "red";
+        }
     });
 }
